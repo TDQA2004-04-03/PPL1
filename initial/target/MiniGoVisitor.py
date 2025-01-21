@@ -14,13 +14,13 @@ class MiniGoVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MiniGoParser#decl.
-    def visitDecl(self, ctx:MiniGoParser.DeclContext):
+    # Visit a parse tree produced by MiniGoParser#statement.
+    def visitStatement(self, ctx:MiniGoParser.StatementContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by MiniGoParser#assignment.
-    def visitAssignment(self, ctx:MiniGoParser.AssignmentContext):
+    # Visit a parse tree produced by MiniGoParser#decl.
+    def visitDecl(self, ctx:MiniGoParser.DeclContext):
         return self.visitChildren(ctx)
 
 
@@ -114,8 +114,23 @@ class MiniGoVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
+    # Visit a parse tree produced by MiniGoParser#argument_func.
+    def visitArgument_func(self, ctx:MiniGoParser.Argument_funcContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MiniGoParser#ret.
+    def visitRet(self, ctx:MiniGoParser.RetContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by MiniGoParser#expression.
     def visitExpression(self, ctx:MiniGoParser.ExpressionContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by MiniGoParser#assignment.
+    def visitAssignment(self, ctx:MiniGoParser.AssignmentContext):
         return self.visitChildren(ctx)
 
 

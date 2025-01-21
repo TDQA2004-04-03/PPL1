@@ -170,7 +170,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input,expect,1033))
 
     def test_assignment_1(self):
-        input = """m = 5;"""
+        input = """m := 5;"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1034))
 
@@ -226,7 +226,7 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input,expect,1044))
 
     def test_array_access_2(self):
-        input = """O[2][3] = {1,3};"""
+        input = """O[2][3] := {1,3};"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1045))
 
@@ -247,37 +247,37 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input,expect,1048))
 
     def test_struct_literal_1(self):
-        input = """a = Complex{real: 2, imag: 3};"""
+        input = """a := Complex{real: 2, imag: 3};"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1049))
 
     def test_struct_literal_2(self):
-        input = """l = Line{Point1: Point{x: 1.2, y: 2.5}, Point2: Point{x: 3.4, y: 7.5}};"""
+        input = """l := Line{Point1: Point{x: 1.2, y: 2.5}, Point2: Point{x: 3.4, y: 7.5}};"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1050))
 
     def test_struct_literal_3(self):
-        input = """c = Choice{l: {1,2,3,4}, max: 5};"""
+        input = """c := Choice{l: {1,2,3,4}, max: 5};"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1051))
 
     def test_struct_literal_null(self):
-        input = """p = Person{};"""
+        input = """p := Person{};"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1052))
 
     def test_struct_missing_value(self):
-        input = """p = Person{height: 1.75, weight:};"""
-        expect = """Error on line 1 col 33: }"""
+        input = """p := Person{height: 1.75, weight:};"""
+        expect = """Error on line 1 col 34: }"""
         self.assertTrue(TestParser.checkParser(input,expect,1053))
 
     def test_struct_access_1(self):
-        input = """p.name = "John";"""
+        input = """p.name := "John";"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1054))
 
     def test_struct_access_2(self):
-        input = """l.point1.x = 2.5;"""
+        input = """l.point1.x := 2.5;"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1055))
     
@@ -287,18 +287,62 @@ class ParserSuite(unittest.TestCase):
         self.assertTrue(TestParser.checkParser(input,expect,1056))
 
     def test_array_of_struct_access(self):
-        input = """myClass[21].name = "Harry";"""
+        input = """myClass[21].name := "Harry";"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1057))
 
     def test_array_member_in_struct_access(self):
-        input = """myClass.name[11] = "Kid";"""
+        input = """myClass.name[11] := "Kid";"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1058))
 
     def test_array_struct_mixed(self):
-        input = """myClass.name[20].fname = "Kaitou Kid";"""
+        input = """myClass.name[20].fname := "Kaitou Kid";"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1059))
 
+    def test_interface_1(self):
+        input = """type Number interface{
+            getValue() int;
+            sum(y Number) Number;
+        }"""
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1060))
 
+    def test_interface_2(self):
+        input = """type Calculator interface{
+            multiply(x, y int) int;
+            divide(x float, y float) float;
+            try(x, y int, z float);
+        }"""
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1061))
+
+    def test_interface_no_type(self):
+        input = """type Number interface{
+            sum(x);
+        }"""
+        expect = """Error on line 2 col 18: )"""
+        self.assertTrue(TestParser.checkParser(input,expect,1062))
+
+    def test_interface_extra_comma(self):
+        input = """type Number interface{
+            sum(x, y int,,z float) float;
+        }"""
+        expect = """Error on line 2 col 26: ,"""
+        self.assertTrue(TestParser.checkParser(input,expect,1063))
+
+    def test_function_1(self):
+        input = """func assign(x int){
+            x := 1;
+            x *= 2;
+        }\n"""
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1064))
+
+    def test_function_2(self):
+        input = """func pi() float{
+            return 3.14;
+        }"""
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1065))

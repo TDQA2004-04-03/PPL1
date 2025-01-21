@@ -1,1 +1,1 @@
-p,=,Person,{,height,:,1.75,,,weight,:,},;,<EOF>
+p,:=,Person,{,height,:,1.75,,,weight,:,},;,<EOF>

@@ -1,1 +1,1 @@
-l.point1.x = 2.5;
+l.point1.x := 2.5;

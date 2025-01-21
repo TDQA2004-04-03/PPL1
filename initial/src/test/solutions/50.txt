@@ -1,1 +1,1 @@
-l,=,Line,{,Point1,:,Point,{,x,:,1.2,,,y,:,2.5,},,,Point2,:,Point,{,x,:,3.4,,,y,:,7.5,},},;,<EOF>
+l,:=,Line,{,Point1,:,Point,{,x,:,1.2,,,y,:,2.5,},,,Point2,:,Point,{,x,:,3.4,,,y,:,7.5,},},;,<EOF>

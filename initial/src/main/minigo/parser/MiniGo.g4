@@ -27,11 +27,11 @@ options{
 }
 
 
-program  : decl+ EOF ;
+program  : statement+ EOF ;
 
-decl: (assignment | funcdecl | vardecl | constdecl | typedecl) (';' | '\n' | EOF);
+statement: (decl | assignment | ret) (';' | '\n' | EOF);
 
-assignment: (ID | array_access | struct_access) ('=' | ASSIGN_OP) expression;
+decl: funcdecl | vardecl | constdecl | typedecl;
 
 constdecl: 'const' ID '=' expression;
 
@@ -59,9 +59,13 @@ interfacedecl: 'type' ID 'interface' '{' method_signature+ '}';
 method_signature: ID '(' (argument (',' argument)*)? ')' typedef? ';';
 argument: ID (',' ID)* typedef;
 
-funcdecl: 'func' ID '(' ')' '{' '}' ';' ;
+funcdecl: 'func' ID '(' (argument_func (',' argument_func)*)? ')' typedef?  '{' statement* '}' ;
+argument_func: ID typedef;
+ret: 'return' expression;
 
 expression: literal;
+
+assignment: (ID | array_access | struct_access)  ASSIGN_OP expression;
 
 fragment BINARY: '0' [bB] [0-1]+;
 fragment OCTAL: '0' [oO] [0-7]+;
@@ -76,7 +80,7 @@ literal: INTEGER | FLOAT | STRING | BOOLEAN | array | structliteral;
 COMMENT1: '//' .* ('\n' | EOF) -> skip;
 COMMENT2: '/*' .* '*/' -> skip;
 
-KEYWORD: 'if' | 'else' | 'for' | 'return' | 'func' | 'type' |         
+KEYWORD: 'if' | 'else' | 'for' | 'func' | 'type' |         
         'const' | 'var' | 'continue' | 'break' | 'range' |
         'nil';
 
@@ -87,7 +91,7 @@ ASSIGN_OP: '+=' | '-=' | '*=' | '/=' | '%=' | ':=';
 FLOAT: DECIMAL '.' DECIMAL? ([eE] ('+'|'-') DECIMAL)?;
 
 OPERATOR: '+' | '-' | '*' | '/' | '%' | 
-        '==' | '!=' | '<' | '<=' | '>' | '>=' |
+        '==' | '!=' | '<' | '<=' | '>' | '>=' | '='
         '&&' | '||' | '!' | '.';
 
 SEPARATOR: '(' | ')' | '{' | '}' | '[' |']' |

@@ -1,0 +1,5 @@
+type Calculator interface{
+            multiply(x, y int) int;
+            divide(x float, y float) float;
+            try(x, y int, z float);
+        }

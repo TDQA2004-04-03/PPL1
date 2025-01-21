@@ -1,0 +1,1 @@
+type,Number,interface,{,getValue,(,),int,;,sum,(,y,Number,),Number,;,},<EOF>

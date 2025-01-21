@@ -1,1 +1,1 @@
-a = Complex{real: 2, imag: 3};
+a := Complex{real: 2, imag: 3};

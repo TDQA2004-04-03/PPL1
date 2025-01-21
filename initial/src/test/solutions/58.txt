@@ -1,1 +1,1 @@
-myClass,.,name,[,11,],=,"Kid",;,<EOF>
+myClass,.,name,[,11,],:=,"Kid",;,<EOF>

@@ -172,8 +172,8 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.checkLexeme(input,expect,33))
 
     def test_assignment_1(self):
-        input = """m = 5;"""
-        expect = """m,=,5,;,<EOF>"""
+        input = """m := 5;"""
+        expect = """m,:=,5,;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,34))
 
     def test_assignment_2(self):
@@ -228,8 +228,8 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.checkLexeme(input,expect,44))
 
     def test_array_access_2(self):
-        input = """O[2][3] = {1,3};"""
-        expect = """O,[,2,],[,3,],=,{,1,,,3,},;,<EOF>"""
+        input = """O[2][3] := {1,3};"""
+        expect = """O,[,2,],[,3,],:=,{,1,,,3,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,45))
 
     def test_array_invalid_access(self):
@@ -260,33 +260,33 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.checkLexeme(input,expect,49))
 
     def test_struct_literal_2(self):
-        input = """l = Line{Point1: Point{x: 1.2, y: 2.5}, Point2: Point{x: 3.4, y: 7.5}};"""
-        expect = """l,=,Line,{,Point1,:,Point,{,x,:,1.2,,,y,:,2.5,},,,Point2,:,Point,{,x,:,3.4,,,y,:,7.5,},},;,<EOF>"""
+        input = """l := Line{Point1: Point{x: 1.2, y: 2.5}, Point2: Point{x: 3.4, y: 7.5}};"""
+        expect = """l,:=,Line,{,Point1,:,Point,{,x,:,1.2,,,y,:,2.5,},,,Point2,:,Point,{,x,:,3.4,,,y,:,7.5,},},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,50))
 
     def test_struct_literal_3(self):
-        input = """c = Choice{l: {1,2,3,4}, max: 5};"""
-        expect = """c,=,Choice,{,l,:,{,1,,,2,,,3,,,4,},,,max,:,5,},;,<EOF>"""
+        input = """c := Choice{l: {1,2,3,4}, max: 5};"""
+        expect = """c,:=,Choice,{,l,:,{,1,,,2,,,3,,,4,},,,max,:,5,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,51))
 
     def test_struct_literal_null(self):
-        input = """p = Person{};"""
-        expect = """p,=,Person,{,},;,<EOF>"""
+        input = """p := Person{};"""
+        expect = """p,:=,Person,{,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,52))
 
     def test_struct_missing_value(self):
-        input = """p = Person{height: 1.75, weight:};"""
-        expect = """p,=,Person,{,height,:,1.75,,,weight,:,},;,<EOF>"""
+        input = """p := Person{height: 1.75, weight:};"""
+        expect = """p,:=,Person,{,height,:,1.75,,,weight,:,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,53))
 
     def test_struct_access_1(self):
-        input = """p.name = "John";"""
-        expect = """p,.,name,=,"John",;,<EOF>"""
+        input = """p.name := "John";"""
+        expect = """p,.,name,:=,"John",;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,54))
 
     def test_struct_access_2(self):
-        input = """l.point1.x = 2.5;"""
-        expect = """l,.,point1,.,x,=,2.5,;,<EOF>"""
+        input = """l.point1.x := 2.5;"""
+        expect = """l,.,point1,.,x,:=,2.5,;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,55))
 
     def test_array_of_struct(self):
@@ -295,21 +295,62 @@ class LexerSuite(unittest.TestCase):
         self.assertTrue(TestLexer.checkLexeme(input,expect,56))
 
     def test_array_of_struct_access(self):
-        input = """myClass[21].name = "Harry";"""
-        expect = """myClass,[,21,],.,name,=,"Harry",;,<EOF>"""
+        input = """myClass[21].name := "Harry";"""
+        expect = """myClass,[,21,],.,name,:=,"Harry",;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,57))
 
     def test_array_member_in_struct_access(self):
-        input = """myClass.name[11] = "Kid";"""
-        expect = """myClass,.,name,[,11,],=,"Kid",;,<EOF>"""
+        input = """myClass.name[11] := "Kid";"""
+        expect = """myClass,.,name,[,11,],:=,"Kid",;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,58))
 
     def test_array_struct_mixed(self):
-        input = """myClass.name[20].fname = "Kaitou Kid";"""
-        expect = """myClass,.,name,[,20,],.,fname,=,"Kaitou Kid",;,<EOF>"""
+        input = """myClass.name[20].fname := "Kaitou Kid";"""
+        expect = """myClass,.,name,[,20,],.,fname,:=,"Kaitou Kid",;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,59))
 
     def test_interface_1(self):
-        input = """type ;"""
-        expect = """myClass,.,name,[,20,],.,fname,=,"Kaitou Kid",;,<EOF>"""
-        self.assertTrue(TestLexer.checkLexeme(input,expect,59))
+        input = """type Number interface{
+            getValue() int;
+            sum(y Number) Number;
+        }"""
+        expect = """type,Number,interface,{,getValue,(,),int,;,sum,(,y,Number,),Number,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,60))
+
+    def test_interface_2(self):
+        input = """type Calculator interface{
+            multiply(x, y int) int;
+            divide(x float, y float) float;
+            try(x, y int, z float);
+        }"""
+        expect = """type,Calculator,interface,{,multiply,(,x,,,y,int,),int,;,divide,(,x,float,,,y,float,),float,;,try,(,x,,,y,int,,,z,float,),;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,61))
+
+    def test_interface_no_type(self):
+        input = """type Number interface{
+            sum(x);
+        }"""
+        expect = """type,Number,interface,{,sum,(,x,),;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,62))
+
+    def test_interface_extra_comma(self):
+        input = """type Number interface{
+            sum(x, y int,,z float) float;
+        }"""
+        expect = """type,Number,interface,{,sum,(,x,,,y,int,,,,,z,float,),float,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,63))
+
+    def test_function_1(self):
+        input = """func assign(x int){
+            x := 1;
+            x *= 2;
+        }"""
+        expect = """func,assign,(,x,int,),{,x,:=,1,;,x,*=,2,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,64))
+
+    def test_function_2(self):
+        input = """func pi() float{
+            return 3.14;
+        }"""
+        expect = """func,pi,(,),float,{,return,3.14,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,65))
