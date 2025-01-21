@@ -1,0 +1,2 @@
+var pi = 3.14; /*Assign value /* float 3.14 */ 
+        to /* variable identified as */ pi */
