@@ -1,0 +1,1 @@
+if,(,a,>,0.0,),{,putStringLn,(,"Positive",),;,},else,if,(,a,<,0.0,),{,putStringLn,(,"Negative",),;,},else,{,putStringLn,(,"Zero",),;,},<EOF>

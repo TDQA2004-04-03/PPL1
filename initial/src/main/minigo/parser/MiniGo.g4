@@ -20,52 +20,71 @@ def emit(self):
         raise ErrorToken(result.text); 
     else:
         return super().emit();
+
+afterStatement = False
 }
+
 
 options{
 	language=Python3;
 }
 
 
-program  : statement+ EOF ;
+program  : statement+ EOF;
 
-statement: (decl | assignment | ret) (';' | '\n' | EOF);
+statement: block_statement | semi_statement;
 
-decl: funcdecl | vardecl | constdecl | typedecl;
+block_statement: func_and_method_decl | typedecl | if_stmt;
+semi_statement: (vardecl | constdecl | assignment | ret | funccall) (SEMI | EOF);
 
-constdecl: 'const' ID '=' expression;
+
+constdecl: CONST ID ASSIGN_INIT expression;
 
 vardecl
-        : 'var' ID array_index* typedef ('=' expression)?
-        | 'var' ID '=' expression;
+        : VAR ID array_index* typedef (ASSIGN_INIT expression)?
+        | VAR ID ASSIGN_INIT expression;
 
-array: '{' array_elements (',' array_elements)* '}'
+array: LBRACE array_elements (SEPARATOR array_elements)* RBRACE
     | array_elements;
-array_elements: '{' array_members '}';
-array_members: expression (',' expression)*;
-array_access: ID array_index+;
-array_index: '[' INTEGER ']';
+array_elements: LBRACE array_members RBRACE;
+array_members: expression (SEPARATOR expression)*;
+array_index: LBRACKET (INTEGER | ID) RBRACKET;
 
 typedef: ATOMIC_TYPE | ID;
 typedecl: structdecl | interfacedecl;
 
-structdecl: 'type' ID 'struct' '{' structfielddecl+ '}';
-structfielddecl: (ID (array_index* typedef)) ';';
-struct_access: ID (array_index | ('.' ID))+;
-structliteral: ID '{' (structfieldliteral (',' structfieldliteral)*)? '}';
+structdecl: TYPE ID STRUCT LBRACE structfielddecl+ RBRACE;
+structfielddecl: (ID (array_index* typedef)) SEMI;
+structliteral: ID LBRACE (structfieldliteral (SEPARATOR structfieldliteral)*)? RBRACE;
 structfieldliteral: ID ':' (literal | structfieldliteral);
 
-interfacedecl: 'type' ID 'interface' '{' method_signature+ '}';
-method_signature: ID '(' (argument (',' argument)*)? ')' typedef? ';';
-argument: ID (',' ID)* typedef;
+interfacedecl: TYPE ID INTERFACE LBRACE method_signature+ RBRACE;
+method_signature: ID LPARENTHESIS (argument (SEPARATOR argument)*)? RPARENTHESIS typedef? SEMI;
+argument: ID (SEPARATOR ID)* typedef;
 
-funcdecl: 'func' ID '(' (argument_func (',' argument_func)*)? ')' typedef?  '{' statement* '}' ;
+var_access: ID (array_index | '.' ID)*; // use for accessing atomic variable, properties in struct, values in array as well as mixed case 
+
+func_and_method_decl: FUNC (LPARENTHESIS ID ID RPARENTHESIS)? ID LPARENTHESIS (argument_func (SEPARATOR argument_func)*)? RPARENTHESIS 
+typedef?  LBRACE statement* RBRACE ;
 argument_func: ID typedef;
-ret: 'return' expression;
+ret: RETURN expression;
+funccall: ID ('.' ID)? '(' (expression (SEPARATOR expression)*)? ')';
+methodcall: var_access '.' ID '(' (expression (',' expression)*)? ')';
 
-expression: literal;
+assignment: var_access  ASSIGN_OP expression;
 
-assignment: (ID | array_access | struct_access)  ASSIGN_OP expression;
+expression: LPARENTHESIS expression RPARENTHESIS
+    | (MINUS_OP | NOT_OP) expression
+    | expression (MUL_OP | DIV_OP | MOD_OP) expression
+    | expression (ADD_OP | MINUS_OP) expression  
+    | expression COMPARE_OP expression
+    | expression AND_OP expression
+    | expression OR_OP expression
+    | funccall| methodcall | var_access | literal;
+
+if_stmt: if_condition block (ELSE (if_stmt | block))?;
+if_condition: IF LPARENTHESIS expression RPARENTHESIS;
+block: LBRACE statement+ RBRACE;
 
 fragment BINARY: '0' [bB] [0-1]+;
 fragment OCTAL: '0' [oO] [0-7]+;
@@ -74,29 +93,66 @@ fragment DECIMAL: '0' | NonZeroDigit Digit*;
 INTEGER: DECIMAL | BINARY | OCTAL | HEXADEC;
 
 ATOMIC_TYPE: 'string' | 'int' | 'float' | 'boolean';
-COMPOSITE_TYPE: 'struct' | 'interface'; 
 literal: INTEGER | FLOAT | STRING | BOOLEAN | array | structliteral;
+
 
 COMMENT1: '//' .* ('\n' | EOF) -> skip;
 COMMENT2: '/*' .* '*/' -> skip;
 
-KEYWORD: 'if' | 'else' | 'for' | 'func' | 'type' |         
-        'const' | 'var' | 'continue' | 'break' | 'range' |
-        'nil';
+
+KEYWORD: 'for' | 'continue' | 'break' | 'range' | 'nil';
+
+VAR: 'var' {
+    self.afterStatement = True
+};
+CONST: 'const' {
+    self.afterStatement = True
+};
+TYPE: 'type';
+STRUCT: 'struct';
+INTERFACE: 'interface';
+FUNC: 'func';
+RETURN: 'return' {
+    self.afterStatement = True
+};
+IF: 'if';
+ELSE: 'else';
 
 BOOLEAN: 'true' | 'false';
 
-ASSIGN_OP: '+=' | '-=' | '*=' | '/=' | '%=' | ':=';
+ASSIGN_OP: ('+=' | '-=' | '*=' | '/=' | '%=' | ':=') {
+    self.afterStatement = True
+};
 
-FLOAT: DECIMAL '.' DECIMAL? ([eE] ('+'|'-') DECIMAL)?;
+FLOAT: Digit* '.' Digit* ([eE] ('+'|'-') Digit*)?;
 
-OPERATOR: '+' | '-' | '*' | '/' | '%' | 
-        '==' | '!=' | '<' | '<=' | '>' | '>=' | '='
-        '&&' | '||' | '!' | '.';
+SEMI: ';' {
+    self.afterStatement = False
+};
 
-SEPARATOR: '(' | ')' | '{' | '}' | '[' |']' |
-            ',' | ';';
+COMPARE_OP: '==' | '!=' | '<' | '<=' | '>' | '>=';
+AND_OP: '&&';
+OR_OP: '||';
+NOT_OP: '!';
+ADD_OP: '+';
+MINUS_OP: '-';
+MUL_OP: '*';
+DIV_OP: '/';
+MOD_OP: '%';
+ASSIGN_INIT: '=';
 
+LPARENTHESIS: '(';
+RPARENTHESIS: ')' {
+    self.afterStatement = True
+};
+LBRACE: '{' {
+    self.afterStatement = False
+};
+RBRACE: '}';
+LBRACKET: '[';
+RBRACKET: ']';
+
+SEPARATOR: ',';
 
 ESCAPE: '\\n' | '\\t' | '\\r' | '\\"' | '\\\\';
 
@@ -111,17 +167,21 @@ fragment NonZeroDigit: [1-9];
 fragment IdentifierStart: UpperLetter | LowerLetter | '_';
 ID: IdentifierStart (IdentifierStart | Digit)*;
 
-NL: '\n' -> skip; //skip newlines
-
 WS : [ \t\r]+ -> skip ; // skip spaces, tabs 
 
+NL: '\n' {
+    if self.afterStatement:
+        self.afterStatement = False
+        self.type = self.SEMI
+        self.text = ";"
+        return self.emit()
+    self.skip()
+}; // skip newlines
 
-ERROR_CHAR: .;
 ILLEGAL_ESCAPE: '"' IN_STRING '\\' {
     raise IllegalEscape(self.text[1:])
 };
 UNCLOSE_STRING: '"' IN_STRING ('\\n' | EOF) {
     raise UncloseString(self.text[1:])
 };
-
-
+ERROR_CHAR: .;

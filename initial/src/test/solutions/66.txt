@@ -1,0 +1,1 @@
+func,euler,(,),float,{,return,2.78,;,<EOF>

@@ -1,0 +1,5 @@
+if (age > 18) {
+            putStringLn("You are an adult");
+        } else {
+            putStringLn("You are a kid");
+        }
