@@ -1,1 +1,0 @@
-p,.,name,:=,getString,(,),;,<EOF>

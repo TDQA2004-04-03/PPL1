@@ -1,3 +1,0 @@
-func (p Point) DistToOx() int {
-            return abs(p.y);
-        }

@@ -1,4 +1,0 @@
-type Whatever struct {
-            arr [5] float;
-            side Complex;
-        }

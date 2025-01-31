@@ -1,1 +1,0 @@
-output := "My" + c.method1("Name");

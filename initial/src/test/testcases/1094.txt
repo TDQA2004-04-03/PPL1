@@ -1,4 +1,0 @@
-for _, val := range arr {
-            s *= value + 2;   
-        }
-        

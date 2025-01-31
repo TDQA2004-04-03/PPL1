@@ -1,1 +1,0 @@
-myClass.name[11] := "Kid";

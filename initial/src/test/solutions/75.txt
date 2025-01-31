@@ -1,1 +1,0 @@
-result,:=,a,[,5,],/,point,.,x,;,<EOF>

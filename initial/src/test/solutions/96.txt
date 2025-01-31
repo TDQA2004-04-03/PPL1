@@ -1,1 +1,0 @@
-for,_,,,val,:=,range,arr,{,if,(,(,2,*,val,+,3,),%,7,==,4,),{,continue,;,},},<EOF>

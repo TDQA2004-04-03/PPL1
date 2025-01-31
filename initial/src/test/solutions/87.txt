@@ -1,1 +1,0 @@
-if,(,a,==,0.0,),{,if,(,b,==,0.0,),{,putStringLn,(,"Infinite solution",),;,},else,{,putStringLn,(,"No solution",),;,},},else,{,x,:=,-,b,/,a,;,putStringLn,(,"Solution is ",+,x,),;,},<EOF>

@@ -1,1 +1,0 @@
-myClass.name[20].fname := "Kaitou Kid";

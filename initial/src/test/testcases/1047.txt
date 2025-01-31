@@ -1,4 +1,0 @@
-type Complex struct {
-real int;
-imag int;
-}

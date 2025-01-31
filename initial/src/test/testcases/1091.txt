@@ -1,4 +1,0 @@
-for i < 20 {
-            putIntLn(i)   
-        }
-        

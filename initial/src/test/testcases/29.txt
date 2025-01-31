@@ -1,2 +1,0 @@
-var e = 2.78; /*Assign value 2.78 
-        to e*/

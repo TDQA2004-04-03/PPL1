@@ -1,1 +1,0 @@
-myClass,[,21,],.,name,:=,"Harry",;,<EOF>

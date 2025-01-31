@@ -1,3 +1,0 @@
-for _, val := range arr
-            s += val;
-        
