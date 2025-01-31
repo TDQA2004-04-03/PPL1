@@ -72,7 +72,7 @@ ret: RETURN expression;
 funccall: ID ('.' ID)? '(' (expression (SEPARATOR expression)*)? ')';
 methodcall: var_access '.' ID '(' (expression (',' expression)*)? ')';
 
-assignment: var_access  ASSIGN_OP expression;
+assignment: var_access  (ASSIGN_OP | ASSIGN_STMT_OP) expression;
 
 expression: LPARENTHESIS expression RPARENTHESIS
     | (MINUS_OP | NOT_OP) expression
@@ -89,7 +89,8 @@ block: LBRACE statement+ RBRACE;
 
 for_loop
     : FOR expression block
-    | FOR assignment SEMI expression SEMI assignment block;
+    | FOR assignment SEMI expression SEMI assignment block
+    | FOR (ID | '_') SEPARATOR ID ASSIGN_STMT_OP RANGE ID block;
 
 fragment BINARY: '0' [bB] [0-1]+;
 fragment OCTAL: '0' [oO] [0-7]+;
@@ -105,7 +106,7 @@ COMMENT1: '//' .* ('\n' | EOF) -> skip;
 COMMENT2: '/*' .* '*/' -> skip;
 
 
-KEYWORD: 'continue' | 'break' | 'range' | 'nil';
+KEYWORD: 'continue' | 'break' | 'nil';
 
 VAR: 'var' {
     self.afterStatement = True
@@ -125,10 +126,14 @@ IF: 'if' {
 };
 ELSE: 'else';
 FOR: 'for';
+RANGE: 'range';
 
 BOOLEAN: 'true' | 'false';
 
-ASSIGN_OP: ('+=' | '-=' | '*=' | '/=' | '%=' | ':=') {
+ASSIGN_OP: ('+=' | '-=' | '*=' | '/=' | '%=') {
+    self.afterStatement = True
+};
+ASSIGN_STMT_OP: ':=' {
     self.afterStatement = True
 };
 

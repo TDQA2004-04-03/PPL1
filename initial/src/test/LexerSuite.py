@@ -528,3 +528,11 @@ class LexerSuite(unittest.TestCase):
         """
         expect = """for,i,:=,1,;,i,<,20,;,i,+=,1,{,putIntLn,(,i,),;,},<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,92))
+
+    def test_lexer_93(self):
+        input = """for index, value := range lst {
+            s += value   
+        }
+        """
+        expect = """for,index,,,value,:=,range,lst,{,s,+=,value,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,93))

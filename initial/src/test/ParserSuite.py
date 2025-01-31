@@ -519,3 +519,11 @@ class ParserSuite(unittest.TestCase):
         """
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1092))
+
+    def test_parser_93(self):
+        input = """for index, value := range lst {
+            s += value   
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1093))

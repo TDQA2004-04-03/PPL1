@@ -1,0 +1,4 @@
+for index, value := range lst {
+            s += value   
+        }
+        
