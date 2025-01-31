@@ -481,13 +481,50 @@ class LexerSuite(unittest.TestCase):
     def test_lexer_87(self):
         input = """if (a == 0.0) {
             if (b == 0.0) {
-                putStringLn("Infinite solution");
+                putStringLn("Infinite solution")
             } else {
-                putStringLn("No solution");
+                putStringLn("No solution")
             }
         } else {
-            x := -b / a;
-            putStringLn("Solution is " + x);
+            x := -b / a
+            putStringLn("Solution is " + x)
         }"""
         expect = """if,(,a,==,0.0,),{,if,(,b,==,0.0,),{,putStringLn,(,"Infinite solution",),;,},else,{,putStringLn,(,"No solution",),;,},},else,{,x,:=,-,b,/,a,;,putStringLn,(,"Solution is ",+,x,),;,},<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,87))
+
+    def test_lexer_88(self):
+        input = """if a > b {
+            c := 5
+        }"""
+        expect = """if,a,>,b,{,c,:=,5,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,88))
+
+    def test_lexer_89(self):
+        input = """if (a > b)
+            c := 5
+        """
+        expect = """if,(,a,>,b,),c,:=,5,;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,89))
+
+    def test_lexer_90(self):
+        input = """if (a > b) {
+            c := 5
+        """
+        expect = """if,(,a,>,b,),{,c,:=,5,;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,90))
+
+    def test_lexer_91(self):
+        input = """for i < 20 {
+            putIntLn(i)   
+        }
+        """
+        expect = """for,i,<,20,{,putIntLn,(,i,),;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,91))
+
+    def test_lexer_92(self):
+        input = """for i := 1; i < 20; i += 1 {
+            putIntLn(i)   
+        }
+        """
+        expect = """for,i,:=,1,;,i,<,20,;,i,+=,1,{,putIntLn,(,i,),;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,92))

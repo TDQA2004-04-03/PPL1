@@ -432,17 +432,17 @@ class ParserSuite(unittest.TestCase):
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1081))
 
-    def test_lexer_82(self):
+    def test_parser_82(self):
         input = """a[5][6] += b[2][4][8];"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1082))
 
-    def test_lexer_83(self):
+    def test_parser_83(self):
         input = """p.name := getString();"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1083))
 
-    def test_lexer_84(self):
+    def test_parser_84(self):
         input = """if (a > 5) {
             b := a + 5
             c := b * 3
@@ -450,7 +450,7 @@ class ParserSuite(unittest.TestCase):
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1084))
 
-    def test_lexer_85(self):
+    def test_parser_85(self):
         input = """if (age > 18) {
             putStringLn("You are an adult");
         } else {
@@ -459,7 +459,7 @@ class ParserSuite(unittest.TestCase):
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1085))
 
-    def test_lexer_86(self):
+    def test_parser_86(self):
         input = """if (a > 0.0) {
             putStringLn("Positive");
         } else if (a < 0.0) {
@@ -470,16 +470,52 @@ class ParserSuite(unittest.TestCase):
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1086))
 
-    def test_lexer_87(self):
+    def test_parser_87(self):
         input = """if (a == 0.0) {
             if (b == 0.0) {
-                putStringLn("Infinite solution");
+                putStringLn("Infinite solution")
             } else {
-                putStringLn("No solution");
+                putStringLn("No solution")
             }
         } else {
-            x := -b / a;
-            putStringLn("Solution is " + x);
+            x := -b / a
+            putStringLn("Solution is " + x)
         }"""
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1087))
+
+    def test_parser_88(self):
+        input = """if a > b {
+            c := 5
+        }"""
+        expect = """Error on line 1 col 4: a"""
+        self.assertTrue(TestParser.checkParser(input,expect,1088))
+
+    def test_parser_89(self):
+        input = """if (a > b)
+            c := 5
+        """
+        expect = """Error on line 2 col 13: c"""
+        self.assertTrue(TestParser.checkParser(input,expect,1089))
+
+    def test_parser_90(self):
+        input = """if (a > b) {
+            c := 5"""
+        expect = """Error on line 2 col 19: <EOF>"""
+        self.assertTrue(TestParser.checkParser(input,expect,1090))
+
+    def test_parser_91(self):
+        input = """for i < 20 {
+            putIntLn(i)   
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1091))
+
+    def test_parser_92(self):
+        input = """for i := 1; i < 20; i += 1 {
+            putIntLn(i)   
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1092))

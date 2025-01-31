@@ -22,6 +22,7 @@ def emit(self):
         return super().emit();
 
 afterStatement = False
+afterIf = False
 }
 
 
@@ -34,7 +35,7 @@ program  : statement+ EOF;
 
 statement: block_statement | semi_statement;
 
-block_statement: func_and_method_decl | typedecl | if_stmt;
+block_statement: func_and_method_decl | typedecl | if_stmt | for_loop;
 semi_statement: (vardecl | constdecl | assignment | ret | funccall) (SEMI | EOF);
 
 
@@ -86,6 +87,10 @@ if_stmt: if_condition block (ELSE (if_stmt | block))?;
 if_condition: IF LPARENTHESIS expression RPARENTHESIS;
 block: LBRACE statement+ RBRACE;
 
+for_loop
+    : FOR expression block
+    | FOR assignment SEMI expression SEMI assignment block;
+
 fragment BINARY: '0' [bB] [0-1]+;
 fragment OCTAL: '0' [oO] [0-7]+;
 fragment HEXADEC: '0' [xX] [0-9a-fA-F]+;
@@ -100,7 +105,7 @@ COMMENT1: '//' .* ('\n' | EOF) -> skip;
 COMMENT2: '/*' .* '*/' -> skip;
 
 
-KEYWORD: 'for' | 'continue' | 'break' | 'range' | 'nil';
+KEYWORD: 'continue' | 'break' | 'range' | 'nil';
 
 VAR: 'var' {
     self.afterStatement = True
@@ -115,8 +120,11 @@ FUNC: 'func';
 RETURN: 'return' {
     self.afterStatement = True
 };
-IF: 'if';
+IF: 'if' {
+    self.afterIf = True
+};
 ELSE: 'else';
+FOR: 'for';
 
 BOOLEAN: 'true' | 'false';
 
@@ -143,7 +151,10 @@ ASSIGN_INIT: '=';
 
 LPARENTHESIS: '(';
 RPARENTHESIS: ')' {
-    self.afterStatement = True
+    if not self.afterIf:
+        self.afterStatement = True
+    else:
+        self.afterIf = False
 };
 LBRACE: '{' {
     self.afterStatement = False

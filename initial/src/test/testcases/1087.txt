@@ -1,10 +1,10 @@
 if (a == 0.0) {
             if (b == 0.0) {
-                putStringLn("Infinite solution");
+                putStringLn("Infinite solution")
             } else {
-                putStringLn("No solution");
+                putStringLn("No solution")
             }
         } else {
-            x := -b / a;
-            putStringLn("Solution is " + x);
+            x := -b / a
+            putStringLn("Solution is " + x)
         }
