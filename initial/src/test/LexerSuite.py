@@ -536,3 +536,56 @@ class LexerSuite(unittest.TestCase):
         """
         expect = """for,index,,,value,:=,range,lst,{,s,+=,value,;,},<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,93))
+
+    def test_lexer_94(self):
+        input = """for _, val := range arr {
+            s *= value + 2;   
+        }
+        """
+        expect = """for,_,,,val,:=,range,arr,{,s,*=,value,+,2,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,94))
+
+    def test_lexer_95(self):
+        input = """for _, val := range arr {
+            if (val % 5 == 0) {
+                break
+            }   
+        }
+        """
+        expect = """for,_,,,val,:=,range,arr,{,if,(,val,%,5,==,0,),{,break,;,},},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,95))
+
+    def test_lexer_96(self):
+        input = """for _, val := range arr {
+            if ((2 * val + 3) % 7 == 4) {
+                continue
+            }   
+        }
+        """
+        expect = """for,_,,,val,:=,range,arr,{,if,(,(,2,*,val,+,3,),%,7,==,4,),{,continue,;,},},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,96))
+
+    def test_lexer_97(self):
+        input = """for _, _ := range arr {
+            a := 3   
+        }
+        """
+        expect = """for,_,,,_,:=,range,arr,{,a,:=,3,;,},<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,97))
+
+    def test_lexer_98(self):
+        input = """for _, val := range arr
+            s += val;
+        """
+        expect = """for,_,,,val,:=,range,arr,s,+=,val,;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,98))
+
+    def test_lexer_99(self):
+        input = """do_something(2 + x, y * 5);"""
+        expect = """do_something,(,2,+,x,,,y,*,5,),;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,99))
+
+    def test_lexer_100(self):
+        input = """do_something("Hello, World", ",")"""
+        expect = """do_something,(,"Hello, World",,,",",),<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,100))

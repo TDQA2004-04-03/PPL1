@@ -527,3 +527,56 @@ class ParserSuite(unittest.TestCase):
         """
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1093))
+
+    def test_parser_94(self):
+        input = """for _, val := range arr {
+            s *= value + 2;   
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1094))
+
+    def test_parser_95(self):
+        input = """for _, val := range arr {
+            if (val % 5 == 0) {
+                break
+            }   
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1095))
+
+    def test_parser_96(self):
+        input = """for _, val := range arr {
+            if ((2 * val + 3) % 7 == 4) {
+                continue
+            }   
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1096))
+
+    def test_parser_97(self):
+        input = """for _, _ := range arr {
+            a := 3   
+        }
+        """
+        expect = """Error on line 1 col 8: _"""
+        self.assertTrue(TestParser.checkParser(input,expect,1097))
+
+    def test_parser_98(self):
+        input = """for _, val := range arr
+            s += val;
+        """
+        expect = """Error on line 2 col 13: s"""
+        self.assertTrue(TestParser.checkParser(input,expect,1098))
+
+    def test_parser_99(self):
+        input = """do_something(2 + x, y * 5);"""
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1099))
+
+    def test_parser_100(self):
+        input = """do_something("Hello, World", ",")"""
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1099))

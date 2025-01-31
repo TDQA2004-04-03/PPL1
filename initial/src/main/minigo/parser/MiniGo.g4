@@ -23,6 +23,7 @@ def emit(self):
 
 afterStatement = False
 afterIf = False
+afterFor = False
 }
 
 
@@ -36,7 +37,7 @@ program  : statement+ EOF;
 statement: block_statement | semi_statement;
 
 block_statement: func_and_method_decl | typedecl | if_stmt | for_loop;
-semi_statement: (vardecl | constdecl | assignment | ret | funccall) (SEMI | EOF);
+semi_statement: (vardecl | constdecl | assignment | ret | funccall | BREAK | CONTINUE) (SEMI | EOF);
 
 
 constdecl: CONST ID ASSIGN_INIT expression;
@@ -106,7 +107,7 @@ COMMENT1: '//' .* ('\n' | EOF) -> skip;
 COMMENT2: '/*' .* '*/' -> skip;
 
 
-KEYWORD: 'continue' | 'break' | 'nil';
+KEYWORD: 'nil';
 
 VAR: 'var' {
     self.afterStatement = True
@@ -125,8 +126,16 @@ IF: 'if' {
     self.afterIf = True
 };
 ELSE: 'else';
-FOR: 'for';
+FOR: 'for' {
+    self.afterFor = True
+};
 RANGE: 'range';
+BREAK: 'break' {
+    self.afterStatement = True
+};
+CONTINUE: 'continue' {
+    self.afterStatement = True
+};
 
 BOOLEAN: 'true' | 'false';
 
@@ -134,7 +143,10 @@ ASSIGN_OP: ('+=' | '-=' | '*=' | '/=' | '%=') {
     self.afterStatement = True
 };
 ASSIGN_STMT_OP: ':=' {
-    self.afterStatement = True
+    if not self.afterFor:
+        self.afterStatement = True
+    else:
+        self.afterFor = False
 };
 
 FLOAT: Digit* '.' Digit* ([eE] ('+'|'-') Digit*)?;
