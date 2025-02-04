@@ -22,8 +22,12 @@ def emit(self):
         return super().emit();
 
 afterStatement = False
+
 afterIf = False
 afterFor = False
+
+inStruct = False
+idInStruct = False
 }
 
 
@@ -34,11 +38,10 @@ options{
 
 program  : statement+ EOF;
 
-statement: block_statement | semi_statement;
+statement: (func_and_method_decl | structdecl | interfacedecl | if_stmt | for_loop | vardecl | constdecl 
+| assignment | ret | funccall | BREAK | CONTINUE) SEMI;
 
-block_statement: func_and_method_decl | typedecl | if_stmt | for_loop;
-semi_statement: (vardecl | constdecl | assignment | ret | funccall | BREAK | CONTINUE) (SEMI | EOF);
-
+typedef: ATOMIC_TYPE | ID;
 
 constdecl: CONST ID ASSIGN_INIT expression;
 
@@ -52,8 +55,6 @@ array_elements: LBRACE array_members RBRACE;
 array_members: expression (SEPARATOR expression)*;
 array_index: LBRACKET (INTEGER | ID) RBRACKET;
 
-typedef: ATOMIC_TYPE | ID;
-typedecl: structdecl | interfacedecl;
 
 structdecl: TYPE ID STRUCT LBRACE structfielddecl+ RBRACE;
 structfielddecl: (ID (array_index* typedef)) SEMI;
@@ -64,7 +65,7 @@ interfacedecl: TYPE ID INTERFACE LBRACE method_signature+ RBRACE;
 method_signature: ID LPARENTHESIS (argument (SEPARATOR argument)*)? RPARENTHESIS typedef? SEMI;
 argument: ID (SEPARATOR ID)* typedef;
 
-var_access: ID (array_index | '.' ID)*; // use for accessing atomic variable, properties in struct, values in array as well as mixed case 
+var_access: (ID | funccall) (array_index | '.' ID)*; // use for accessing atomic variable, properties in struct, values in array as well as mixed case 
 
 func_and_method_decl: FUNC (LPARENTHESIS ID ID RPARENTHESIS)? ID LPARENTHESIS (argument_func (SEPARATOR argument_func)*)? RPARENTHESIS 
 typedef?  LBRACE statement* RBRACE ;
@@ -99,11 +100,14 @@ fragment HEXADEC: '0' [xX] [0-9a-fA-F]+;
 fragment DECIMAL: '0' | NonZeroDigit Digit*;
 INTEGER: DECIMAL | BINARY | OCTAL | HEXADEC;
 
-ATOMIC_TYPE: 'string' | 'int' | 'float' | 'boolean';
-literal: INTEGER | FLOAT | STRING | BOOLEAN | array | structliteral;
+ATOMIC_TYPE: ('string' | 'int' | 'float' | 'boolean') {
+    if self.inStruct:
+        self.afterStatement = True
+};
+literal: (INTEGER | FLOAT | STRING | BOOLEAN | array | structliteral);
 
 
-COMMENT1: '//' .* ('\n' | EOF) -> skip;
+COMMENT1: '//' ~[\r\n]* -> skip;
 COMMENT2: '/*' .* '*/' -> skip;
 
 
@@ -116,7 +120,9 @@ CONST: 'const' {
     self.afterStatement = True
 };
 TYPE: 'type';
-STRUCT: 'struct';
+STRUCT: 'struct' {
+    self.inStruct = True
+};
 INTERFACE: 'interface';
 FUNC: 'func';
 RETURN: 'return' {
@@ -176,7 +182,11 @@ RPARENTHESIS: ')' {
 LBRACE: '{' {
     self.afterStatement = False
 };
-RBRACE: '}';
+RBRACE: '}' {
+    self.afterStatement = True
+    if self.inStruct:
+        self.inStruct = False
+};
 LBRACKET: '[';
 RBRACKET: ']';
 
@@ -193,7 +203,13 @@ fragment LowerLetter: [a-z];
 fragment Digit: [0-9];
 fragment NonZeroDigit: [1-9];
 fragment IdentifierStart: UpperLetter | LowerLetter | '_';
-ID: IdentifierStart (IdentifierStart | Digit)*;
+ID: IdentifierStart (IdentifierStart | Digit)* {
+    if self.inStruct:
+        if not self.idInStruct:
+            self.idInStruct = True
+        else:
+            self.afterStatement = True
+};
 
 WS : [ \t\r]+ -> skip ; // skip spaces, tabs 
 

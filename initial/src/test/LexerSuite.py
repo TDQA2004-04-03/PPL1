@@ -237,18 +237,18 @@ class LexerSuite(unittest.TestCase):
 
     def test_lexer_47(self):
         input = """type Complex struct {
-            real int;
-            imag int;
-        }"""
-        expect = """type,Complex,struct,{,real,int,;,imag,int,;,},<EOF>"""
+            real int
+            imag int
+        };"""
+        expect = """type,Complex,struct,{,real,int,;,imag,int,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,47))
 
     def test_lexer_48(self):
         input = """type Whatever struct {
-            arr [5] float;
-            side Complex;
-        }"""
-        expect = """type,Whatever,struct,{,arr,[,5,],float,;,side,Complex,;,},<EOF>"""
+            arr [5] float
+            side Complex
+        };"""
+        expect = """type,Whatever,struct,{,arr,[,5,],float,;,side,Complex,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,48))
 
     def test_lexer_49(self):
@@ -310,8 +310,8 @@ class LexerSuite(unittest.TestCase):
         input = """type Number interface{
             getValue() int;
             sum(y Number) Number
-        }"""
-        expect = """type,Number,interface,{,getValue,(,),int,;,sum,(,y,Number,),Number,;,},<EOF>"""
+        };"""
+        expect = """type,Number,interface,{,getValue,(,),int,;,sum,(,y,Number,),Number,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,60))
 
     def test_lexer_61(self):
@@ -319,8 +319,8 @@ class LexerSuite(unittest.TestCase):
             multiply(x, y int) int
             divide(x float, y float) float
             try(x, y int, z float)
-        }"""
-        expect = """type,Calculator,interface,{,multiply,(,x,,,y,int,),int,;,divide,(,x,float,,,y,float,),float,;,try,(,x,,,y,int,,,z,float,),;,},<EOF>"""
+        };"""
+        expect = """type,Calculator,interface,{,multiply,(,x,,,y,int,),int,;,divide,(,x,float,,,y,float,),float,;,try,(,x,,,y,int,,,z,float,),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,61))
 
     def test_lexer_62(self):
@@ -341,15 +341,15 @@ class LexerSuite(unittest.TestCase):
         input = """func assign(x int){
             x := 1
             x *= 2
-        }"""
-        expect = """func,assign,(,x,int,),{,x,:=,1,;,x,*=,2,;,},<EOF>"""
+        };"""
+        expect = """func,assign,(,x,int,),{,x,:=,1,;,x,*=,2,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,64))
 
     def test_lexer_65(self):
         input = """func pi() float{
             return 3.14;
-        }"""
-        expect = """func,pi,(,),float,{,return,3.14,;,},<EOF>"""
+        };"""
+        expect = """func,pi,(,),float,{,return,3.14,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,65))
     
     def test_lexer_66(self):
@@ -377,17 +377,17 @@ class LexerSuite(unittest.TestCase):
 
     def test_lexer_70(self):
         input = """func (p Point) DistToOx() int {
-            return abs(p.y);
-        }"""
-        expect = """func,(,p,Point,),DistToOx,(,),int,{,return,abs,(,p,.,y,),;,},<EOF>"""
+            return abs(p.y)
+        };"""
+        expect = """func,(,p,Point,),DistToOx,(,),int,{,return,abs,(,p,.,y,),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,70))
 
     def test_lexer_71(self):
         input = """func (l List) first() Person {
             l.access += 1
             return list[0]
-        }"""
-        expect = """func,(,l,List,),first,(,),Person,{,l,.,access,+=,1,;,return,list,[,0,],;,},<EOF>"""
+        };"""
+        expect = """func,(,l,List,),first,(,),Person,{,l,.,access,+=,1,;,return,list,[,0,],;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,71))
 
     def test_lexer_72(self):
@@ -454,8 +454,8 @@ class LexerSuite(unittest.TestCase):
         input = """if (a > 5) {
             b := a + 5
             c := b * 3
-        }"""
-        expect = """if,(,a,>,5,),{,b,:=,a,+,5,;,c,:=,b,*,3,;,},<EOF>"""
+        };"""
+        expect = """if,(,a,>,5,),{,b,:=,a,+,5,;,c,:=,b,*,3,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,84))
 
     def test_lexer_85(self):
@@ -463,8 +463,8 @@ class LexerSuite(unittest.TestCase):
             putStringLn("You are an adult");
         } else {
             putStringLn("You are a kid");
-        }"""
-        expect = """if,(,age,>,18,),{,putStringLn,(,"You are an adult",),;,},else,{,putStringLn,(,"You are a kid",),;,},<EOF>"""
+        };"""
+        expect = """if,(,age,>,18,),{,putStringLn,(,"You are an adult",),;,},else,{,putStringLn,(,"You are a kid",),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,85))
 
     def test_lexer_86(self):
@@ -474,8 +474,8 @@ class LexerSuite(unittest.TestCase):
             putStringLn("Negative");
         } else {
             putStringLn("Zero");
-        }"""
-        expect = """if,(,a,>,0.0,),{,putStringLn,(,"Positive",),;,},else,if,(,a,<,0.0,),{,putStringLn,(,"Negative",),;,},else,{,putStringLn,(,"Zero",),;,},<EOF>"""
+        };"""
+        expect = """if,(,a,>,0.0,),{,putStringLn,(,"Positive",),;,},else,if,(,a,<,0.0,),{,putStringLn,(,"Negative",),;,},else,{,putStringLn,(,"Zero",),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,86))
 
     def test_lexer_87(self):
@@ -489,14 +489,14 @@ class LexerSuite(unittest.TestCase):
             x := -b / a
             putStringLn("Solution is " + x)
         }"""
-        expect = """if,(,a,==,0.0,),{,if,(,b,==,0.0,),{,putStringLn,(,"Infinite solution",),;,},else,{,putStringLn,(,"No solution",),;,},},else,{,x,:=,-,b,/,a,;,putStringLn,(,"Solution is ",+,x,),;,},<EOF>"""
+        expect = """if,(,a,==,0.0,),{,if,(,b,==,0.0,),{,putStringLn,(,"Infinite solution",),;,},else,{,putStringLn,(,"No solution",),;,},;,},else,{,x,:=,-,b,/,a,;,putStringLn,(,"Solution is ",+,x,),;,},<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,87))
 
     def test_lexer_88(self):
         input = """if a > b {
             c := 5
-        }"""
-        expect = """if,a,>,b,{,c,:=,5,;,},<EOF>"""
+        };"""
+        expect = """if,a,>,b,{,c,:=,5,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,88))
 
     def test_lexer_89(self):
@@ -518,7 +518,7 @@ class LexerSuite(unittest.TestCase):
             putIntLn(i)   
         }
         """
-        expect = """for,i,<,20,{,putIntLn,(,i,),;,},<EOF>"""
+        expect = """for,i,<,20,{,putIntLn,(,i,),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,91))
 
     def test_lexer_92(self):
@@ -526,7 +526,7 @@ class LexerSuite(unittest.TestCase):
             putIntLn(i)   
         }
         """
-        expect = """for,i,:=,1,;,i,<,20,;,i,+=,1,{,putIntLn,(,i,),;,},<EOF>"""
+        expect = """for,i,:=,1,;,i,<,20,;,i,+=,1,{,putIntLn,(,i,),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,92))
 
     def test_lexer_93(self):
@@ -534,7 +534,7 @@ class LexerSuite(unittest.TestCase):
             s += value   
         }
         """
-        expect = """for,index,,,value,:=,range,lst,{,s,+=,value,;,},<EOF>"""
+        expect = """for,index,,,value,:=,range,lst,{,s,+=,value,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,93))
 
     def test_lexer_94(self):
@@ -542,7 +542,7 @@ class LexerSuite(unittest.TestCase):
             s *= value + 2;   
         }
         """
-        expect = """for,_,,,val,:=,range,arr,{,s,*=,value,+,2,;,},<EOF>"""
+        expect = """for,_,,,val,:=,range,arr,{,s,*=,value,+,2,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,94))
 
     def test_lexer_95(self):
@@ -552,7 +552,7 @@ class LexerSuite(unittest.TestCase):
             }   
         }
         """
-        expect = """for,_,,,val,:=,range,arr,{,if,(,val,%,5,==,0,),{,break,;,},},<EOF>"""
+        expect = """for,_,,,val,:=,range,arr,{,if,(,val,%,5,==,0,),{,break,;,},;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,95))
 
     def test_lexer_96(self):
@@ -562,7 +562,7 @@ class LexerSuite(unittest.TestCase):
             }   
         }
         """
-        expect = """for,_,,,val,:=,range,arr,{,if,(,(,2,*,val,+,3,),%,7,==,4,),{,continue,;,},},<EOF>"""
+        expect = """for,_,,,val,:=,range,arr,{,if,(,(,2,*,val,+,3,),%,7,==,4,),{,continue,;,},;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,96))
 
     def test_lexer_97(self):
@@ -570,7 +570,7 @@ class LexerSuite(unittest.TestCase):
             a := 3   
         }
         """
-        expect = """for,_,,,_,:=,range,arr,{,a,:=,3,;,},<EOF>"""
+        expect = """for,_,,,_,:=,range,arr,{,a,:=,3,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,97))
 
     def test_lexer_98(self):
@@ -589,3 +589,77 @@ class LexerSuite(unittest.TestCase):
         input = """do_something("Hello, World", ",")"""
         expect = """do_something,(,"Hello, World",,,",",),<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,100))
+
+    def test_lexer_program_1(self):
+        input = """func main() {
+            putStringLn("Hello, World!")
+        };"""
+        expect = """func,main,(,),{,putStringLn,(,"Hello, World!",),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,101))
+    
+    def test_lexer_program_2(self):
+        input = """func main() {
+            var userName
+            userName := "user"
+            putStringLn(userName)
+        };"""
+        expect = """func,main,(,),{,var,userName,;,userName,:=,"user",;,putStringLn,(,userName,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,102))
+
+    def test_lexer_program_3(self):
+        input = """x := 2
+        func main() {
+            x = 3
+            putInt(x)
+        }
+        """
+        expect = """x,:=,2,;,func,main,(,),{,x,=,3,putInt,(,x,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,103))
+
+    def test_lexer_program_4(self):
+        input = """func main() {
+            var x float = 13.5
+            var y float = 2.5e+4
+        }
+        """
+        expect = """func,main,(,),{,var,x,float,=,13.5,;,var,y,float,=,2.5e+4,;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,104))
+
+    def test_lexer_program_5(self):
+        input = """func main() {
+                    x := -3
+                    // Assign negative value to x
+                    putInt(x)
+                }
+        """
+        expect = """func,main,(,),{,x,:=,-,3,;,putInt,(,x,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,105))
+
+    def test_lexer_program_6(self):
+        input = """func main() {
+            const x = 2
+            const y = 3
+            var someVar = x + y
+        }
+        """
+        expect = """func,main,(,),{,const,x,=,2,;,const,y,=,3,;,var,someVar,=,x,+,y,;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,106))
+
+    def test_lexer_program_7(self):
+        input = """func main() {
+            const X := 2
+            putIntLn(X)
+        }
+        """
+        expect = """func,main,(,),{,const,X,:=,2,;,putIntLn,(,X,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,107))
+
+    def test_lexer_program_8(self):
+        input = """func main() {
+            x := 2017
+            putBoolLn(x > 2022 && x <= 3000)
+            putBool(x >= 2000 && x < 3000)              
+        }
+        """
+        expect = """func,main,(,),{,x,:=,2017,;,putBoolLn,(,x,>,2022,&&,x,<=,3000,),;,putBool,(,x,>=,2000,&&,x,<,3000,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,108))
