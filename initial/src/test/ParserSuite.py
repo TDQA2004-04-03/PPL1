@@ -642,7 +642,7 @@ class ParserSuite(unittest.TestCase):
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1106))
 
-    def test_lexer_program_7(self):
+    def test_parser_program_7(self):
         input = """func main() {
             const X:= 2
             putIntLn(X)
@@ -660,3 +660,51 @@ class ParserSuite(unittest.TestCase):
         """
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1108))
+
+    def test_lexer_program_9(self):
+        input = """func main() {
+            x := true        
+
+            putBoolLn(x)
+            putBoolLn(!x)
+            putBoolLn(!x && x)
+            putBoolLn(!x || x)                   
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1109))
+
+    def test_parser_program_10(self):
+        input = """func main() {
+            x := 3
+            if (x > 0) {
+                x := 5
+        }
+        """        
+        expect = """Error on line 6 col 9: <EOF>"""
+        self.assertTrue(TestParser.checkParser(input,expect,1110))
+
+    def test_parser_program_11(self):
+        input = """func main() {
+            var x int = randInt(100)
+            if (x > 10) {
+                putIntLn("yay!")
+            } else {
+                putIntln("nay!")
+            }        
+        }
+        """        
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1111))
+
+    def test_parser_program_12(self):
+        input = """func main() {
+            sum := 0
+            for var i int = 0; i < 50; i += 1 {
+                sum += i
+            }
+            putInt(sum)
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1112))

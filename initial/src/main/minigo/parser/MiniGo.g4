@@ -38,15 +38,16 @@ options{
 
 program  : statement+ EOF;
 
-statement: (func_and_method_decl | structdecl | interfacedecl | if_stmt | for_loop | vardecl | constdecl 
+statement: (func_and_method_decl | structdecl | interfacedecl | if_stmt | for_loop | vardecl | vardeclassign | constdecl 
 | assignment | ret | funccall | BREAK | CONTINUE) SEMI;
 
 typedef: ATOMIC_TYPE | ID;
 
 constdecl: CONST ID ASSIGN_INIT expression;
 
-vardecl
-        : VAR ID array_index* typedef (ASSIGN_INIT expression)?
+vardecl: VAR ID array_index* typedef;
+vardeclassign
+        : VAR ID array_index* typedef ASSIGN_INIT expression
         | VAR ID ASSIGN_INIT expression;
 
 array: LBRACE array_elements (SEPARATOR array_elements)* RBRACE
@@ -91,7 +92,7 @@ block: LBRACE statement+ RBRACE;
 
 for_loop
     : FOR expression block
-    | FOR assignment SEMI expression SEMI assignment block
+    | FOR (assignment | vardeclassign) SEMI expression SEMI assignment block
     | FOR (ID | '_') SEPARATOR ID ASSIGN_STMT_OP RANGE ID block;
 
 fragment BINARY: '0' [bB] [0-1]+;
