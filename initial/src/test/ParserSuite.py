@@ -708,3 +708,100 @@ class ParserSuite(unittest.TestCase):
         """
         expect = """successful"""
         self.assertTrue(TestParser.checkParser(input,expect,1112))
+
+    def test_parser_program_13(self):
+        input = """func main() {
+            var x [4]int
+            x[2] := 4
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1113))
+
+    def test_parser_program_14(self):
+        input = """func main() {
+            x := 2
+            var y [x]
+        }
+        """
+        expect = """Error on line 3 col 23: ;"""
+        self.assertTrue(TestParser.checkParser(input,expect,1114))
+
+    def test_parser_program_15(self):
+        input = """func main() {
+            for {
+                putStringLn("forever!")
+            }        
+        }
+        """
+        expect = """Error on line 2 col 17: {"""
+        self.assertTrue(TestParser.checkParser(input,expect,1115))
+
+    def test_parser_program_16(self):
+        input = """const OvenTime = 40;
+        const TimeLayer = 2;
+        func RemainingTime(time int) int {
+            return OvenTime - time;
+        };
+        func PreparationTime(numberOfLayers int) int {
+            return TimeLayer * numberOfLayers;
+        };
+        func main() {
+            elapsedTime := RemainingTime(20) + PreparationTime(2);
+            putInt(elapsedTime);
+        };
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1116))
+
+    def test_parser_program_17(self):
+        input = """func main() {
+            var knightIsAwake = false;
+            var archerIsAwake = true;
+            var prisonerIsAwake = false;
+            var petDogIsPresent = false;
+            var canRescue = !archerIsAwake && (petDogIsPresent || (!knightIsAwake && prisonerIsAwake));
+            putBoolLn(canRescue);
+        };
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1117))
+
+    def test_parser_program_18(self):
+        input = """func collatz_step(n int) int {
+            count = 0;
+            for n != 1 {
+                if (n % 2 == 0) {
+                    n /= 2;
+                } else {
+                    n := 3 * n + 1;
+                };
+                count += 1;
+            };
+            return count;
+        };
+        """
+        expect = """Error on line 2 col 19: ="""
+        self.assertTrue(TestParser.checkParser(input,expect,1118))
+
+    def test_lexer_program_19(self):
+        input = """type Complex struct {
+            real float;
+            imaginary float;
+        };
+        func (x Complex) Add(y Complex) Complex {
+            add_real := x.real + y.real;
+            add_imag := x.imaginary + y.imaginary;
+            return Complex{real: add_real, imaginary: add_imag};
+        };
+        func main() {
+            x := Complex{real: 5.0e0, imaginary: 4.0e0};
+            y := Complex{real: 4.3e0, imaginary: 2.9e0};
+            z := x.Add(y);
+            PutFloatLn(z.real);
+            PutFloatLn(z.imaginary);
+        };
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1119))
+

@@ -711,3 +711,99 @@ class LexerSuite(unittest.TestCase):
         """
         expect = """func,main,(,),{,sum,:=,0,;,for,var,i,int,=,0,;,i,<,50,;,i,+=,1,{,sum,+=,i,;,},;,putInt,(,sum,),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,112))
+
+    def test_lexer_program_13(self):
+        input = """func main() {
+            var x [4]int
+            x[2] := 4
+        }
+        """
+        expect = """func,main,(,),{,var,x,[,4,],int,;,x,[,2,],:=,4,;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,113))
+
+    def test_lexer_program_14(self):
+        input = """func main() {
+            x := 2
+            var y [x]
+        }
+        """
+        expect = """func,main,(,),{,x,:=,2,;,var,y,[,x,],;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,114))
+
+    def test_lexer_program_15(self):
+        input = """func main() {
+            for {
+                putStringLn("forever!")
+            }        
+        }
+        """
+        expect = """func,main,(,),{,for,{,putStringLn,(,"forever!",),;,},;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,115))
+
+    def test_lexer_program_16(self):
+        input = """const OvenTime = 40;
+        const TimeLayer = 2;
+        func RemainingTime(time int) int {
+            return OvenTime - time;
+        };
+        func PreparationTime(numberOfLayers int) int {
+            return TimeLayer * numberOfLayers;
+        };
+        func main() {
+            elapsedTime := RemainingTime(20) + PreparationTime(2);
+            putInt(elapsedTime);
+        };
+        """
+        expect = """const,OvenTime,=,40,;,const,TimeLayer,=,2,;,func,RemainingTime,(,time,int,),int,{,return,OvenTime,-,time,;,},;,func,PreparationTime,(,numberOfLayers,int,),int,{,return,TimeLayer,*,numberOfLayers,;,},;,func,main,(,),{,elapsedTime,:=,RemainingTime,(,20,),+,PreparationTime,(,2,),;,putInt,(,elapsedTime,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,116))
+
+    def test_lexer_program_17(self):
+        input = """func main() {
+            var knightIsAwake = false;
+            var archerIsAwake = true;
+            var prisonerIsAwake = false;
+            var petDogIsPresent = false;
+            var canRescue = !archerIsAwake && (petDogIsPresent || (!knightIsAwake && prisonerIsAwake));
+            putBoolLn(canRescue);
+        };
+        """
+        expect = """func,main,(,),{,var,knightIsAwake,=,false,;,var,archerIsAwake,=,true,;,var,prisonerIsAwake,=,false,;,var,petDogIsPresent,=,false,;,var,canRescue,=,!,archerIsAwake,&&,(,petDogIsPresent,||,(,!,knightIsAwake,&&,prisonerIsAwake,),),;,putBoolLn,(,canRescue,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,117))
+
+    def test_lexer_program_18(self):
+        input = """func collatz_step(n int) int {
+            count = 0;
+            for n != 1 {
+                if (n % 2 == 0) {
+                    n /= 2;
+                } else {
+                    n := 3 * n + 1;
+                };
+                count += 1;
+            };
+            return count;
+        };
+        """
+        expect = """func,collatz_step,(,n,int,),int,{,count,=,0,;,for,n,!=,1,{,if,(,n,%,2,==,0,),{,n,/=,2,;,},else,{,n,:=,3,*,n,+,1,;,},;,count,+=,1,;,},;,return,count,;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,118))
+
+    def test_lexer_program_19(self):
+        input = """type Complex struct {
+            real float;
+            imaginary float;
+        };
+        func (x Complex) Add(y Complex) Complex {
+            add_real := x.real + y.real;
+            add_imag := x.imaginary + y.imaginary;
+            return Complex{real: add_real, imaginary: add_imag};
+        };
+        func main() {
+            x := Complex{real: 5.0e0, imaginary: 4.0e0};
+            y := Complex{real: 4.3e0, imaginary: 2.9e0};
+            z := x.Add(y);
+            PutFloatLn(z.real);
+            PutFloatLn(z.imaginary);
+        };
+        """
+        expect = """type,Complex,struct,{,real,float,;,imaginary,float,;,},;,func,(,x,Complex,),Add,(,y,Complex,),Complex,{,add_real,:=,x,.,real,+,y,.,real,;,add_imag,:=,x,.,imaginary,+,y,.,imaginary,;,return,Complex,{,real,:,add_real,,,imaginary,:,add_imag,},;,},;,func,main,(,),{,x,:=,Complex,{,real,:,5.0e0,,,imaginary,:,4.0e0,},;,y,:=,Complex,{,real,:,4.3e0,,,imaginary,:,2.9e0,},;,z,:=,x,.,Add,(,y,),;,PutFloatLn,(,z,.,real,),;,PutFloatLn,(,z,.,imaginary,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,119))

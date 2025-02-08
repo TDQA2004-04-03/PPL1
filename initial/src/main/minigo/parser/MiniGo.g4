@@ -47,8 +47,8 @@ constdecl: CONST ID ASSIGN_INIT expression;
 
 vardecl: VAR ID array_index* typedef;
 vardeclassign
-        : VAR ID array_index* typedef ASSIGN_INIT expression
-        | VAR ID ASSIGN_INIT expression;
+        : VAR ID array_index* typedef ASSIGN_INIT (expression | array)
+        | VAR ID ASSIGN_INIT (expression | array);
 
 array: LBRACE array_elements (SEPARATOR array_elements)* RBRACE
     | array_elements;
@@ -60,7 +60,7 @@ array_index: LBRACKET (INTEGER | ID) RBRACKET;
 structdecl: TYPE ID STRUCT LBRACE structfielddecl+ RBRACE;
 structfielddecl: (ID (array_index* typedef)) SEMI;
 structliteral: ID LBRACE (structfieldliteral (SEPARATOR structfieldliteral)*)? RBRACE;
-structfieldliteral: ID ':' (literal | structfieldliteral);
+structfieldliteral: ID ':' (literal | array | structliteral | structfieldliteral | var_access);
 
 interfacedecl: TYPE ID INTERFACE LBRACE method_signature+ RBRACE;
 method_signature: ID LPARENTHESIS (argument (SEPARATOR argument)*)? RPARENTHESIS typedef? SEMI;
@@ -71,11 +71,11 @@ var_access: (ID | funccall) (array_index | '.' ID)*; // use for accessing atomic
 func_and_method_decl: FUNC (LPARENTHESIS ID ID RPARENTHESIS)? ID LPARENTHESIS (argument_func (SEPARATOR argument_func)*)? RPARENTHESIS 
 typedef?  LBRACE statement* RBRACE ;
 argument_func: ID typedef;
-ret: RETURN expression;
+ret: RETURN (expression | array | structliteral);
 funccall: ID ('.' ID)? '(' (expression (SEPARATOR expression)*)? ')';
-methodcall: var_access '.' ID '(' (expression (',' expression)*)? ')';
+methodcall: var_access '.' ID '(' (expression (SEPARATOR expression)*)? ')';
 
-assignment: var_access  (ASSIGN_OP | ASSIGN_STMT_OP) expression;
+assignment: var_access  (ASSIGN_OP | ASSIGN_STMT_OP) (expression | array | structliteral);
 
 expression: LPARENTHESIS expression RPARENTHESIS
     | (MINUS_OP | NOT_OP) expression
@@ -105,8 +105,9 @@ ATOMIC_TYPE: ('string' | 'int' | 'float' | 'boolean') {
     if self.inStruct:
         self.afterStatement = True
 };
-literal: (INTEGER | FLOAT | STRING | BOOLEAN | array | structliteral);
+literal: (INTEGER | FLOAT | STRING | BOOLEAN);
 
+// Consider array and structliteral
 
 COMMENT1: '//' ~[\r\n]* -> skip;
 COMMENT2: '/*' .* '*/' -> skip;
@@ -156,7 +157,7 @@ ASSIGN_STMT_OP: ':=' {
         self.afterFor = False
 };
 
-FLOAT: Digit* '.' Digit* ([eE] ('+'|'-') Digit*)?;
+FLOAT: Digit* '.' Digit* ([eE] ('+'|'-')? Digit*)?;
 
 SEMI: ';' {
     self.afterStatement = False
