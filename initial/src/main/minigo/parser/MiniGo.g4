@@ -52,13 +52,11 @@ vardeclassign
         : VAR ID typedef ASSIGN_INIT (expression | array)
         | VAR ID ASSIGN_INIT (expression | array);
 
-array: array_type  LBRACE array_elements (SEPARATOR array_elements)* RBRACE
-    | array_type array_elements;
-array_elements: LBRACE array_members RBRACE;
-array_members: array_mem (SEPARATOR array_mem)*;
-array_mem: literal | structliteral | ID;
+array: array_type array_list;
 array_type: array_index+ typedef;
 array_index: LBRACKET expression RBRACKET;
+array_list: LBRACE array_mem (SEPARATOR array_mem)* RBRACE;
+array_mem: literal | structliteral | ID | array_list;
 
 structdecl: TYPE ID STRUCT LBRACE structfielddecl+ RBRACE;
 structfielddecl: (ID typedef) SEMI;
@@ -69,7 +67,7 @@ interfacedecl: TYPE ID INTERFACE LBRACE (method_signature SEMI)+ RBRACE;
 method_signature: ID LPARENTHESIS (argument (SEPARATOR argument)*)? RPARENTHESIS typedef?;
 argument: ID (SEPARATOR ID)* typedef;
 
-var_access: (ID | funccall) (array_index | '.' ID)*; // use for accessing atomic variable, properties in struct, values in array as well as mixed case 
+var_access: (ID | funccall) (array_index | '.' ID)*; 
 
 func_and_method_decl: FUNC method_receiver? method_signature block;
 method_receiver: LPARENTHESIS ID ID RPARENTHESIS;

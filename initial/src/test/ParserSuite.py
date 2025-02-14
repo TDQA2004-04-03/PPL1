@@ -998,3 +998,45 @@ class ParserSuite(unittest.TestCase):
         input = """func fibonacci(a int) int {};"""
         expect = """Error on line 1 col 28: }"""
         self.assertTrue(TestParser.checkParser(input,expect,1131))
+
+    def test_parser_program_32(self):
+        input = """var a [4]int = [2]int {2,3} + [2]int {5,7};"""
+        expect = """Error on line 1 col 29: +"""
+        self.assertTrue(TestParser.checkParser(input,expect,1132))
+
+    def test_parser_program_33(self):
+        input = """type Complex struct {
+            a string;
+            b [2]float;
+            c Whatever;
+        }
+        func main() {
+            c := Complex{a: "new_number", b: [2]int {14,2}, c: Whatever{line: "Now"}};
+        }
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1133))
+
+    def test_parser_program_34(self):
+        input = """func main() {
+            arr := [2][2][2] int {{{1,2}, {3, 4}}, {{5,6}, {7,8}}};
+        };
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1134))
+
+    def test_parser_program_35(self):
+        input = """func main() {
+            result := (true || a) && !b && (c > 2.5))
+        };
+        """
+        expect = """Error on line 2 col 53: )"""
+        self.assertTrue(TestParser.checkParser(input,expect,1135))
+
+    def test_parser_program_36(self):
+        input = """func main() {
+            result := [2] Person {Person{id: 1}, Person{id: 5}};
+        };
+        """
+        expect = """successful"""
+        self.assertTrue(TestParser.checkParser(input,expect,1136))

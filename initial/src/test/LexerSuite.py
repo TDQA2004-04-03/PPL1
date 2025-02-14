@@ -890,7 +890,49 @@ class LexerSuite(unittest.TestCase):
         expect = """func,mul,(,a,,,b,int,),int,{,return,a,*,b,;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,130))
 
-    def test_parser_program_31(self):
+    def test_lexer_program_31(self):
         input = """func fibonacci(a int) int {};"""
         expect = """func,fibonacci,(,a,int,),int,{,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,131))
+
+    def test_lexer_program_32(self):
+        input = """var a [4]int = [2]int {2,3} + [2]int {5,7};"""
+        expect = """var,a,[,4,],int,=,[,2,],int,{,2,,,3,},+,[,2,],int,{,5,,,7,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,132))
+
+    def test_lexer_program_33(self):
+        input = """type Complex struct {
+            a string;
+            b [2]float;
+            c Whatever;
+        }
+        func main() {
+            c := Complex{a: "new_number", b: [2]int {14,2}, c: Whatever{line: "Now"}};
+        }
+        """
+        expect = """type,Complex,struct,{,a,string,;,b,[,2,],float,;,c,Whatever,;,},;,func,main,(,),{,c,:=,Complex,{,a,:,"new_number",,,b,:,[,2,],int,{,14,,,2,},,,c,:,Whatever,{,line,:,"Now",},},;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,133))
+
+    def test_parser_program_34(self):
+        input = """func main() {
+            arr := [2][2][2] int {{{1,2}, {3, 4}}, {{5,6}, {7,8}}};
+        };
+        """
+        expect = """func,main,(,),{,arr,:=,[,2,],[,2,],[,2,],int,{,{,{,1,,,2,},,,{,3,,,4,},},,,{,{,5,,,6,},,,{,7,,,8,},},},;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,134))
+
+    def test_parser_program_35(self):
+        input = """func main() {
+            result := (true || a) && !b && (c > 2.5))
+        };
+        """
+        expect = """func,main,(,),{,result,:=,(,true,||,a,),&&,!,b,&&,(,c,>,2.5,),),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,135))
+
+    def test_lexer_program_36(self):
+        input = """func main() {
+            result := [2] Person {Person{id: 1}, Person{id: 5}};
+        };
+        """
+        expect = """func,main,(,),{,result,:=,[,2,],Person,{,Person,{,id,:,1,},,,Person,{,id,:,5,},},;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,136))
