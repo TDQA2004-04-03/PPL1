@@ -120,17 +120,17 @@ class LexerSuite(unittest.TestCase):
 
     def test_lexer_24(self):
         input = """var str3 = "QuocAnh;"""
-        expect = """var,str3,=,Unclosed string: QuocAnh;"""
+        expect = """var,str3,=,Unclosed string: "QuocAnh;"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,24))
 
     def test_lexer_25(self):
-        input = """var str4 = "Quoc\Anh;"""
-        expect = """var,str4,=,Illegal escape in string: Quoc\\"""
+        input = """var str4 = "Quoc\Anh";"""
+        expect = """var,str4,=,Illegal escape in string: "Quoc\A"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,25))
 
     def test_lexer_26(self):
         input = """var str4 = "Bayern"Munich";"""
-        expect = """var,str4,=,"Bayern",Munich,Unclosed string: ;"""
+        expect = """var,str4,=,"Bayern",Munich,Unclosed string: ";"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,26))
 
     def test_lexer_27(self):
@@ -807,3 +807,90 @@ class LexerSuite(unittest.TestCase):
         """
         expect = """type,Complex,struct,{,real,float,;,imaginary,float,;,},;,func,(,x,Complex,),Add,(,y,Complex,),Complex,{,add_real,:=,x,.,real,+,y,.,real,;,add_imag,:=,x,.,imaginary,+,y,.,imaginary,;,return,Complex,{,real,:,add_real,,,imaginary,:,add_imag,},;,},;,func,main,(,),{,x,:=,Complex,{,real,:,5.0e0,,,imaginary,:,4.0e0,},;,y,:=,Complex,{,real,:,4.3e0,,,imaginary,:,2.9e0,},;,z,:=,x,.,Add,(,y,),;,PutFloatLn,(,z,.,real,),;,PutFloatLn,(,z,.,imaginary,),;,},;,<EOF>"""
         self.assertTrue(TestLexer.checkLexeme(input,expect,119))
+
+    def test_lexer_program_20(self):
+        input = """putString("Hello,);
+        a := 5;"""
+        expect = """putString,(,Unclosed string: "Hello,);"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,120))
+
+    def test_lexer_program_21(self):
+        input = """var int x, m, n;
+                m := 10; 
+                n := 15;"""
+        expect = """var,int,x,,,m,,,n,;,m,:=,10,;,n,:=,15,;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,121))
+
+    def test_lexer_program_22(self):
+        input = """func main () 
+        {
+            s := 0;
+        };"""
+        expect = """func,main,(,),;,{,s,:=,0,;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,122))
+
+    def test_lexer_program_23(self):
+        input = """func main () {
+            var s int = 0;
+            for s < 10 {
+                if (s > 5 && s < 10) {
+                    continue;
+                };
+            };
+        };"""
+        expect = """func,main,(,),{,var,s,int,=,0,;,for,s,<,10,{,if,(,s,>,5,&&,s,<,10,),{,continue,;,},;,},;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,123))
+
+    def test_lexer_program_24(self):
+        input = """arr := {1, 2+2};"""
+        expect = """arr,:=,{,1,,,2,+,2,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,124))
+
+    def test_lexer_program_25(self):
+        input = """const pi = 3.14;
+        func area(r float) float {
+            return pi * r * r;
+        };"""
+        expect = """const,pi,=,3.14,;,func,area,(,r,float,),float,{,return,pi,*,r,*,r,;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,125))
+
+    def test_lexer_program_26(self):
+        input = """const VAL = (157 + 2.35) * 4.62 / 35.28;"""
+        expect = """const,VAL,=,(,157,+,2.35,),*,4.62,/,35.28,;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,126))
+
+    def test_lexer_program_27(self):
+        input = """
+            var a [20]int
+            a[2+5] := 8
+        """
+        expect = """var,a,[,20,],int,;,a,[,2,+,5,],:=,8,;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,127))
+
+    def test_lexer_program_28(self):
+        input = """var a int = nil;"""
+        expect = """var,a,int,=,nil,;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,128))
+
+    def test_lexer_program_29(self):
+        input = """type Class struct { name string; grade float; }
+        func (c Class) print() {
+            putStringLn(name);
+            putFloatLn(grade);
+        }
+        """
+        expect = """type,Class,struct,{,name,string,;,grade,float,;,},;,func,(,c,Class,),print,(,),{,putStringLn,(,name,),;,putFloatLn,(,grade,),;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,129))
+
+    def test_lexer_program_30(self):
+        input = """func mul(a, b int) int {
+            return a * b;
+        };
+        """
+        expect = """func,mul,(,a,,,b,int,),int,{,return,a,*,b,;,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,130))
+
+    def test_parser_program_31(self):
+        input = """func fibonacci(a int) int {};"""
+        expect = """func,fibonacci,(,a,int,),int,{,},;,<EOF>"""
+        self.assertTrue(TestLexer.checkLexeme(input,expect,131))

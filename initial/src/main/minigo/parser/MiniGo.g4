@@ -36,44 +36,46 @@ options{
 }
 
 
-program  : statement+ EOF;
+program  : decl+ EOF;
+
+decl: (constdecl | vardecl | vardeclassign | structdecl | interfacedecl | func_and_method_decl) SEMI;
 
 statement: (func_and_method_decl | structdecl | interfacedecl | if_stmt | for_loop | vardecl | vardeclassign | constdecl 
-| assignment | ret | funccall | BREAK | CONTINUE) SEMI;
+| assignment | ret | funccall | methodcall | BREAK | CONTINUE) SEMI;
 
-typedef: ATOMIC_TYPE | ID;
+typedef: ATOMIC_TYPE | ID | array_type;
 
 constdecl: CONST ID ASSIGN_INIT expression;
 
-vardecl: VAR ID array_index* typedef;
+vardecl: VAR ID typedef;
 vardeclassign
-        : VAR ID array_index* typedef ASSIGN_INIT (expression | array)
+        : VAR ID typedef ASSIGN_INIT (expression | array)
         | VAR ID ASSIGN_INIT (expression | array);
 
-array: LBRACE array_elements (SEPARATOR array_elements)* RBRACE
-    | array_elements;
+array: array_type  LBRACE array_elements (SEPARATOR array_elements)* RBRACE
+    | array_type array_elements;
 array_elements: LBRACE array_members RBRACE;
-array_members: expression (SEPARATOR expression)*;
-array_index: LBRACKET (INTEGER | ID) RBRACKET;
-
+array_members: array_mem (SEPARATOR array_mem)*;
+array_mem: literal | structliteral | ID;
+array_type: array_index+ typedef;
+array_index: LBRACKET expression RBRACKET;
 
 structdecl: TYPE ID STRUCT LBRACE structfielddecl+ RBRACE;
-structfielddecl: (ID (array_index* typedef)) SEMI;
+structfielddecl: (ID typedef) SEMI;
 structliteral: ID LBRACE (structfieldliteral (SEPARATOR structfieldliteral)*)? RBRACE;
 structfieldliteral: ID ':' (literal | array | structliteral | structfieldliteral | var_access);
 
-interfacedecl: TYPE ID INTERFACE LBRACE method_signature+ RBRACE;
-method_signature: ID LPARENTHESIS (argument (SEPARATOR argument)*)? RPARENTHESIS typedef? SEMI;
+interfacedecl: TYPE ID INTERFACE LBRACE (method_signature SEMI)+ RBRACE;
+method_signature: ID LPARENTHESIS (argument (SEPARATOR argument)*)? RPARENTHESIS typedef?;
 argument: ID (SEPARATOR ID)* typedef;
 
 var_access: (ID | funccall) (array_index | '.' ID)*; // use for accessing atomic variable, properties in struct, values in array as well as mixed case 
 
-func_and_method_decl: FUNC (LPARENTHESIS ID ID RPARENTHESIS)? ID LPARENTHESIS (argument_func (SEPARATOR argument_func)*)? RPARENTHESIS 
-typedef?  LBRACE statement* RBRACE ;
-argument_func: ID typedef;
+func_and_method_decl: FUNC method_receiver? method_signature block;
+method_receiver: LPARENTHESIS ID ID RPARENTHESIS;
 ret: RETURN (expression | array | structliteral);
-funccall: ID ('.' ID)? '(' (expression (SEPARATOR expression)*)? ')';
-methodcall: var_access '.' ID '(' (expression (SEPARATOR expression)*)? ')';
+funccall: ID LPARENTHESIS (expression (SEPARATOR expression)*)? RPARENTHESIS;
+methodcall: var_access '.' ID LPARENTHESIS (expression (SEPARATOR expression)*)? RPARENTHESIS;
 
 assignment: var_access  (ASSIGN_OP | ASSIGN_STMT_OP) (expression | array | structliteral);
 
@@ -84,7 +86,7 @@ expression: LPARENTHESIS expression RPARENTHESIS
     | expression COMPARE_OP expression
     | expression AND_OP expression
     | expression OR_OP expression
-    | funccall| methodcall | var_access | literal;
+    | funccall| methodcall | var_access | literal | 'nil';
 
 if_stmt: if_condition block (ELSE (if_stmt | block))?;
 if_condition: IF LPARENTHESIS expression RPARENTHESIS;
@@ -215,6 +217,8 @@ ID: IdentifierStart (IdentifierStart | Digit)* {
 
 WS : [ \t\r]+ -> skip ; // skip spaces, tabs 
 
+
+
 NL: '\n' {
     if self.afterStatement:
         self.afterStatement = False
@@ -224,10 +228,11 @@ NL: '\n' {
     self.skip()
 }; // skip newlines
 
-ILLEGAL_ESCAPE: '"' IN_STRING '\\' {
-    raise IllegalEscape(self.text[1:])
+ILLEGAL_ESCAPE: '"' IN_STRING '\\' . {
+    raise IllegalEscape(self.text)
 };
-UNCLOSE_STRING: '"' IN_STRING ('\\n' | EOF) {
-    raise UncloseString(self.text[1:])
+UNCLOSE_STRING: '"' IN_STRING (NL | EOF)  {
+    self.text = self.text.split('\r\n')[0]
+    raise UncloseString(self.text)
 };
 ERROR_CHAR: .;
